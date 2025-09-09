@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref, watchEffect, useTemplateRef } from 'vue';
+import { defineProps, ref, watchEffect, useTemplateRef, watch } from 'vue';
 
 // utils
 import { isNilOrEmpty, checkImage } from '@/helpers';
@@ -31,10 +31,8 @@ const handleImageLoading = (
   }
 };
 
-const loadImage = () => {
-  const imageSrc: string = (props.imageSrc as string) || '';
-
-  if (!isNilOrEmpty(imageSrc) && imageSrc && !isNilOrEmpty(imageRefContainer.value)) {
+const loadImage = (imageSrc = '') => {
+  if (!isNilOrEmpty(imageSrc) && is(String, imageSrc)) {
     imageError.value = false;
     handleImageLoading('LOADING', null);
 
@@ -54,15 +52,17 @@ const loadImage = () => {
   }
 };
 
-watchEffect(() => {
-  if (!isNilOrEmpty(props.imageSrc) && is(String, props.imageSrc)) {
-    loadImage();
-  }
-});
+watch(
+  () => imageRefContainer.value && props.imageSrc,
+  (newImageSrc) => {
+    loadImage(newImageSrc ?? '');
+  },
+  { immediate: true },
+);
 </script>
 <template>
   <div v-if="imageError" class="text-red-500">Failed to load image.</div>
-  <div v-else class="relative image-container" ref="imageRefContainer">
+  <div class="relative image-container" ref="imageRefContainer">
     <img v-if="!isNilOrEmpty(image)" :src="image ?? undefined" alt="Loaded Image" />
   </div>
 </template>
