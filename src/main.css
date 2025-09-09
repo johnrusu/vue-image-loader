@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+body {
+  @apply bg-gray-100 text-gray-900;
+}
+
+img {
+  @apply block;
+  max-width: 100%;
+  height: auto;
+}
+
+.image-container {
+  @apply relative;
+  display: inline-block;
+  min-width: 100px;
+  min-height: 100px;
+  z-index: 1;
+  &.loading {
+    &::after {
+      content: '';
+      @apply absolute inset-0 bg-gray-200 animate-pulse;
+      z-index: 2;
+    }
+  }
+}
